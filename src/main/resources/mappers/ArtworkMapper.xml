@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+  
+  <mapper namespace="com.achu.mapper.ArtworkMapper"> <!-- 인터페이스 만든위치를 똑같이 지정해줘야함 -->
+   
+	  <select id="getArtwork">
+	  		SELECT * FROM v_art_info_tag 
+	  		WHERE seqno = #{ano}
+	  </select>
+	  
+	  <!-- <select id ="searchDeatil">
+		  	SELECT *
+		  	FROM v_art_info_tag
+		  	WHERE name = ${tagName}
+	  	<if test='tag != null'>
+	  		and name = ${tagName} 
+	  	</if>
+	  </select> -->
+	  
+	<update id="setImageLink">
+		UPDATE image 
+		SET link_address=#{imageLink}
+		WHERE art_seqno=#{seqno}
+	</update>
+	
+	<update id="setImageFile">
+		UPDATE image 
+		SET route=#{image.route}, save_name=#{image.saveName}, file_type=#{image.fileType},file_size=#{image.fileSize}
+		WHERE art_seqno=#{seqno}
+	</update>
+	
+	<select id="getRatingList" resultType="Artwork">
+		  SELECT seqno, name, author, image_route 
+		FROM v_art_info
+		WHERE seqno in(
+		    SELECT seqno FROM v_art_info
+		    MINUS
+		    SELECT seqno FROM user_rating_record WHERE id=#{id})
+		order by dbms_random.value
+	</select>
+	
+	<update id="modify" parameterType="java.util.HashMap">
+		UPDATE artwork
+		SET ${field}=#{value}
+		WHERE seqno=#{seqno}
+	</update>
+	
+	  </mapper>
